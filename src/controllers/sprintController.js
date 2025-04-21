@@ -12,7 +12,7 @@ exports.getAllSprints=async(req,res)=>{
 }
 exports.getSprintById=async(req,res)=>{
     try {
-        const lookSprint=await Sprint.findById(req.params.id)
+        const lookSprint=await Sprint.findById(res.sprintId)
         if(!lookSprint){
             console.log("El Sprint no fue encontrado")
             res.status(404).json({message:"El Sprint no fue encontrado"})
@@ -36,7 +36,7 @@ exports.createSprint=async(req,res)=>{
 exports.updateSprint=async(req,res)=>{
     try {
         
-        const lookTask=await Sprint.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        const lookTask=await Sprint.findByIdAndUpdate(res.sprintId,req.body,{new:true})
 
         if(!lookTask){
             console.log("El Sprint no pudo ser actulizada")
@@ -50,14 +50,14 @@ exports.updateSprint=async(req,res)=>{
 }
 exports.addTaskToSprint=async(req,res)=>{
     try {
-        const newTask=await Task.findById(req.params.taskId)
+        const newTask=await Task.findById(res.taskId)
         if(newTask){
-            const lookSprint=await Sprint.findById(req.params.id)
+            const lookSprint=await Sprint.findById(res.sprintId)
             lookSprint.tasks.push(newTask)
             const savedSprint=await lookSprint.save()
             res.status(200).json(savedSprint)
         }
-        res.status(404).json({ message: 'El ID utilizado no es valido'})
+        res.status(404).json({ message: 'Error'})
         
     } catch (error) {
         console.error('Ocurrio un error durante el proceso de agregar una nueva tarea al sprint:', error);
@@ -66,7 +66,7 @@ exports.addTaskToSprint=async(req,res)=>{
 }
 exports.deleteSprintById=async(req,res)=>{
     try {
-        const deletedSprint=await Sprint.findByIdAndDelete(req.params.id)
+        const deletedSprint=await Sprint.findByIdAndDelete(res.sprintId)
         res.status(200).json({message:"Sprint eliminado exitosamente"})
     } catch (error) {
         console.error('Ocurrio un error durante la eliminacion de un sprint:', error);

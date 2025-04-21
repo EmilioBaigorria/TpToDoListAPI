@@ -23,7 +23,7 @@ exports.createBacklog=async(req,res)=>{
 }
 exports.addTaskToBacklog=async(req,res)=>{
     try {
-        const newTask=await Task.findById(req.params.taskId)
+        const newTask=await Task.findById(res.taskId)
         if(newTask){
             const back=await Backlog.findOne()
             back.tasks.push(newTask)

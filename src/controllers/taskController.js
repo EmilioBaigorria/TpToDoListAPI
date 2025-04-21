@@ -12,10 +12,10 @@ exports.getAllTasks=async(req,res)=>{
 }
 exports.getTaskById=async(req,res)=>{
     try {
-        const lookTask=await Task.findById(req.params.id)
-
+        const lookTask=await Task.findById(res.taskId)
         if(!lookTask){
             console.log("La tarea no fue encontrada")
+
             res.status(404).json({ message: 'La tarea no fue encontrada' });
         }
         res.json(lookTask)
@@ -36,8 +36,7 @@ exports.createTask=async(req,res)=>{
 }
 exports.updateTask=async(req,res)=>{
     try {
-        
-        const lookTask=await Task.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        const lookTask=await Task.findByIdAndUpdate(res.taskId,req.body,{new:true})
         if(!lookTask){
             console.log("La tarea no pudo ser actulizada")
             res.status(404).json({ message: 'La tarea no pudo ser actulizada' });
@@ -50,11 +49,11 @@ exports.updateTask=async(req,res)=>{
 }
 exports.deleteTareaById=async(req,res)=>{
     try {
-        const sprints=await Sprint.findOne({ tasks: req.params.id })
+        const sprints=await Sprint.findOne({ tasks: res.taskId })
         if(sprints){
             return res.status(405).json({message:"La tarea no fue eliminada dado a que se encuntra en un sprint"})
         }
-        const deletedTask=await Task.findByIdAndDelete(req.params.id)
+        const deletedTask=await Task.findByIdAndDelete(res.taskId)
         res.status(200).json({message:"Tarea eliminada exitosamente"})
     } catch (error) {
         console.error('Ocurrio un error durante la eliminacion de una de las tareas: ', error);
