@@ -3,7 +3,7 @@ const Task = require("../models/task.model");
 
 exports.getAllSprints=async(req,res)=>{
     try {
-        const sprints=await Sprint.find()
+        const sprints=await Sprint.find().populate("tasks")
         res.json(sprints)
     } catch (error) {
         console.error('Ocurrio un error durante la obtencion de todos los sprints:', error);
@@ -12,7 +12,7 @@ exports.getAllSprints=async(req,res)=>{
 }
 exports.getSprintById=async(req,res)=>{
     try {
-        const lookSprint=await Sprint.findById(res.sprintId)
+        const lookSprint=await Sprint.findById(req.params.sprintId).populate("tasks")
         if(!lookSprint){
             console.log("El Sprint no fue encontrado")
             res.status(404).json({message:"El Sprint no fue encontrado"})
@@ -35,33 +35,15 @@ exports.createSprint=async(req,res)=>{
 }
 exports.updateSprint=async(req,res)=>{
     try {
-        
-        const lookTask=await Sprint.findByIdAndUpdate(res.sprintId,req.body,{new:true})
-
-        if(!lookTask){
+        const lookSprint=await Sprint.findByIdAndUpdate(req.params.sprintId,req.body,{new:true})
+        if(!lookSprint){
             console.log("El Sprint no pudo ser actulizada")
             res.status(404).json({ message: 'El Sprint no pudo ser actulizada' });
         }
-        res.status(200).json(lookTask)
+        res.status(200).json(lookSprint)
     } catch (error) {
         console.error('Ocurrio un error durante la edicion de un Sprint:', error);
         res.status(500).json({ message: 'Ocurrio un error durante la edicion de un Sprint' });
-    }
-}
-exports.addTaskToSprint=async(req,res)=>{
-    try {
-        const newTask=await Task.findById(res.taskId)
-        if(newTask){
-            const lookSprint=await Sprint.findById(res.sprintId)
-            lookSprint.tasks.push(newTask)
-            const savedSprint=await lookSprint.save()
-            res.status(200).json(savedSprint)
-        }
-        res.status(404).json({ message: 'Error'})
-        
-    } catch (error) {
-        console.error('Ocurrio un error durante el proceso de agregar una nueva tarea al sprint:', error);
-        res.status(500).json({ message: 'Ocurrio un error durante el proceso de agregar una nueva tarea al sprint' });
     }
 }
 exports.deleteSprintById=async(req,res)=>{
@@ -71,5 +53,56 @@ exports.deleteSprintById=async(req,res)=>{
     } catch (error) {
         console.error('Ocurrio un error durante la eliminacion de un sprint:', error);
         res.status(500).json({ message: 'Ocurrio un error durante la eliminacion de un sprint' });
+    }
+}
+exports.addTaskToSprint=async(req,res)=>{
+    try {
+        const newTask=await Task.findById(req.params.taskId)
+        if(newTask){
+            const lookSprint=await Sprint.findById(req.params.id)
+            lookSprint.tasks.push(newTask)
+            const savedSprint=await lookSprint.save()
+            res.status(200).json(savedSprint)
+            return
+        }
+        res.status(404).json({ message: 'Error'})
+        
+    } catch (error) {
+        console.error('Ocurrio un error durante el proceso de agregar una nueva tarea al sprint:', error);
+        res.status(500).json({ message: 'Ocurrio un error durante el proceso de agregar una nueva tarea al sprint' });
+    }
+}
+
+exports.deleteTaskInSprintById = async (req, res) => { //
+    try {
+        const taskId=res.taskId
+        const sprint=await Sprint.findById(res.sprintId);
+        if(sprint){
+            const updatedTaskList=sprint.tasks.filter((el)=>{
+                el.id!==taskId
+            })
+            sprint.tasks=updatedTaskList
+            const newSprint= await sprint.save()
+            res.status(200).json(newSprint)
+            return
+        }
+        res.status(404).json({ message: "El id indicado no es valido" });
+    } catch (error) {
+        console.error("Ocurrio un error durante el proceso de eliminar una tarea de un sprint:", error);
+        res.status(500).json({message:"Ocurrio un error durante el proceso de eliminar una tarea de un sprint"});
+    }
+};
+exports.changeTaskStateOnSprint=async (req,res)=>{//
+    try {
+        const {taskId,newState}=res
+        const task=await Task.findByIdAndUpdate(taskId,{state:newState},{new:true})
+        if(task){
+            res.status(200).json(task)
+            return
+        }
+        res.status(404).json({message:"El id indicado no es valido"})
+        
+    } catch (error) {
+        res.status(500).json({message:"Ocurrio un error durante el proceso de eliminar una tarea de un sprint"});
     }
 }

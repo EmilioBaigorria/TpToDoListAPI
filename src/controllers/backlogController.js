@@ -4,7 +4,7 @@ const Task = require("../models/task.model");
 
 exports.getBacklog=async(req,res)=>{
     try {
-        const back=await Backlog.find()
+        const back=await Backlog.find().populate("tasks")
         res.json(back)
     } catch (error) {
         console.error('Ocurrio un error durante la obtencion del backlog:', error);
@@ -23,7 +23,7 @@ exports.createBacklog=async(req,res)=>{
 }
 exports.addTaskToBacklog=async(req,res)=>{
     try {
-        const newTask=await Task.findById(res.taskId)
+        const newTask=await Task.findById(req.params.taskId)
         if(newTask){
             const back=await Backlog.findOne()
             back.tasks.push(newTask)
