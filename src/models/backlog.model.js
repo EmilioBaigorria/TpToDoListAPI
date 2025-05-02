@@ -2,7 +2,7 @@
 const mongoose =require("mongoose")
 
 const backlogSchema=new mongoose.Schema({
-    tasks:[{
+    tareas:[{
         type: mongoose.Schema.Types.ObjectId, ref: "Task"
     }]
 })

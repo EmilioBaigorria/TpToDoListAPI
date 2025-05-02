@@ -1,21 +1,21 @@
 const mongoose=require("mongoose")
 
 const sprintSchema=new mongoose.Schema({
-    startDate:{
+    nombre:{
+        type:String,
+        required:true
+    },
+    fechaInicio:{
         type:String,
         required:true,
     },
-    endDate:{
+    fechaCierre:{
         type:String,
         requiered:true
     },
-    tasks:[{
+    tareas:[{
         type:mongoose.Schema.Types.ObjectId, ref:"Task"
-    }],
-    color:{
-        type:String,
-        required:true
-    }
+    }]
 })
 
 const Sprint=mongoose.model("Sprint",sprintSchema)

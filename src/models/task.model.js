@@ -2,21 +2,17 @@ const mongoose=require("mongoose")
 
 
 const taskSchema=new mongoose.Schema({
-    tittle:{
+    titulo:{
         type:String,
         required:true
     },
-    description:String,
-    state:{
+    descripcion:String,
+    estado:{
         type:String,
-        enum:['pendiente','enprogreso','terminada'],
+        enum:['pendiente','activo','terminado'],
         required:true
     },
-    dueTime:{
-        type:String,
-        required:true
-    },
-    color:{
+    fechaLimite:{
         type:String,
         required:true
     }

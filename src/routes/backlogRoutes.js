@@ -15,6 +15,7 @@ const validateId= async(req,res,next)=>{
 backlogRouter.get('/backlog', backlogController.getBacklog);
 backlogRouter.post('/backlog',backlogController.createBacklog)
 backlogRouter.put('/backlog/addTask/:taskId',validateId,backlogController.addTaskToBacklog)
+backlogRouter.delete('/backlog/deleteTask/:taskId',validateId,backlogController.deleteTaskInBacklogById)
 
 
 module.exports = backlogRouter;

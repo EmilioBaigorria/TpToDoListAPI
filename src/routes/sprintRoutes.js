@@ -31,6 +31,8 @@ sprintRouter.get('/sprints/byId/:id',validateId,sprintController.getSprintById)
 sprintRouter.post('/sprints',sprintController.createSprint)
 sprintRouter.put('/sprints/updateById/:id',validateId,sprintController.updateSprint)
 sprintRouter.put('/sprints/:id/addTask/:taskId',validateId,sprintController.addTaskToSprint)
+sprintRouter.put('/sprints/changeTaskState/:taskId/:newState',sprintController.changeTaskStateOnSprint)
 sprintRouter.delete('/sprints/deleteById/:id',validateId,sprintController.deleteSprintById)
+sprintRouter.delete('/sprints/:id/deleteTask/:taskId',validateId,sprintController.deleteTaskInSprintById)
 
 module.exports = sprintRouter;
